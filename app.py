@@ -1,9 +1,20 @@
-from property_sources import PROPERTY_SOURCES
+import requests
 
-print("🏠 AI PROPERTY FINDER")
-print("--------------------")
+HUD_API = "https://egis.hud.gov/arcgis/rest/services/cpdmaps/HudSfReo/MapServer/0/query"
 
-for name, url in PROPERTY_SOURCES.items():
-    print(f"{name}: {url}")
+params = {
+    "where": "1=1",
+    "outFields": "*",
+    "returnGeometry": "false",
+    "f": "json"
+}
 
-print("\n✅ Property sources connected!")
+response = requests.get(HUD_API, params=params)
+data = response.json()
+
+properties = data.get("features", [])
+
+print(f"🏠 Found {len(properties)} HUD properties")
+
+for property in properties[:10]:
+    print(property["attributes"])
